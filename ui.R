@@ -19,40 +19,25 @@ shinyUI(fluidPage(id="main-page",
                         .ui_region h4 {
                             margin:0px;
                         }
-                        .ui_region label[for=ui_show_fit_options] {
+
+                        .dropdown_item input {
+                            display:none;
+                        }
+                        .dropdown_item label {
                             padding-left:0px;
+                        }
+                        .dropdown_item .shiny-input-container {
                             margin-bottom:0px;
                         }
-                        #ui_show_fit_options {
-                            display:none;
-                        }
-                        .ui_region label[for=ui_show_plot_options] {
-                            padding-left:0px;
+                        .dropdown_item .checkbox {
+                            margin-top:0px;
                             margin-bottom:0px;
                         }
-                        #ui_show_plot_options {
-                            display:none;
+                        #hyper_fit_data_used {
+                            height: 30px;
+                            line-height: 30px;
                         }
-                        .ui_region label[for=ui_show_upload_data] {
-                            padding-left:0px;
-                            margin-bottom:0px;
-                        }
-                        #ui_show_upload_data {
-                            display:none;
-                        }
-                        .ui_region label[for=ui_show_example_data] {
-                            padding-left:0px;
-                            margin-bottom:0px;
-                        }
-                        #ui_show_example_data {
-                            display:none;
-                        }
-                        .ui_region label[for=ui_show_column_names] {
-                            padding-left:0px;
-                        }
-                        #ui_show_column_names {
-                            display:none;
-                        }
+
                         #ui_sidebar {
                             padding:10px;
                             background-color:#FAFAFA;
@@ -69,9 +54,6 @@ shinyUI(fluidPage(id="main-page",
                         #ui_footer {
                             text-align:center;
                             margin-bottom:3px;
-                        }
-                        #ui_recalculate_div {
-                            margin:5px;
                         }
                         .container {
                             text-align:justify;
@@ -98,6 +80,7 @@ shinyUI(fluidPage(id="main-page",
         # Plot Tab #
         ############
         tabPanel("Plot",
+                 br(),
                  sidebarLayout(
                      
                      # Side Panel #
@@ -114,7 +97,9 @@ shinyUI(fluidPage(id="main-page",
                          ),
                          tags$hr(),
                          div(class="ui_region well",
-                             checkboxInput(inputId="ui_show_fit_options", label=uiOutput("ui_fit_options_header"), value=FALSE),
+                             div(class="dropdown_item",
+                                checkboxInput(inputId="ui_show_fit_options", label=uiOutput("ui_fit_options_header"), value=FALSE)
+                             ),
                              conditionalPanel(condition="input.ui_show_fit_options == true",
                                               br(),
                                               fluidRow(
@@ -187,7 +172,9 @@ shinyUI(fluidPage(id="main-page",
                              )
                          ),
                          div(class="ui_region well",
-                             checkboxInput(inputId="ui_show_plot_options", label=uiOutput("ui_plot_options_header"), value=FALSE),
+                             div(class="dropdown_item",
+                                checkboxInput(inputId="ui_show_plot_options", label=uiOutput("ui_plot_options_header"), value=FALSE)
+                             ),
                              conditionalPanel(condition="input.ui_show_plot_options == true",
                                               br(),
                                               fluidRow(
@@ -232,7 +219,9 @@ shinyUI(fluidPage(id="main-page",
                              )
                          ),
                          div(class="ui_region well",
-                             checkboxInput(inputId="ui_show_upload_data", label=uiOutput("ui_upload_data_header"), value=TRUE),
+                             div(class="dropdown_item",
+                                checkboxInput(inputId="ui_show_upload_data", label=uiOutput("ui_upload_data_header"), value=TRUE)
+                             ),
                              conditionalPanel(condition="input.ui_show_upload_data == true",
                                               br(),
                                               fileInput('upload_file1', 'Choose file to upload',
@@ -245,7 +234,10 @@ shinyUI(fluidPage(id="main-page",
                                                             '.tsv'
                                                         )
                                               ),
-                                              checkboxInput(inputId="ui_show_column_names", label=uiOutput("ui_column_names_header"), value=FALSE),
+                                              div(class="dropdown_item",
+                                                checkboxInput(inputId="ui_show_column_names", label=uiOutput("ui_column_names_header"), value=FALSE)
+                                              ),
+                                              br(),
                                               conditionalPanel(condition="input.ui_show_column_names == true",
                                                                fluidRow(
                                                                    column(4,
@@ -271,7 +263,9 @@ shinyUI(fluidPage(id="main-page",
                              )
                          ),
                          div(class="ui_region well",
-                             checkboxInput(inputId="ui_show_example_data", label=uiOutput("ui_example_data_header"), value=TRUE),
+                             div(class="dropdown_item",
+                                checkboxInput(inputId="ui_show_example_data", label=uiOutput("ui_example_data_header"), value=TRUE)
+                             ),
                              conditionalPanel(condition="input.ui_show_example_data == true",
                                               br(),
                                               actionButton(inputId="example_hogg", label=span("hogg"), icon("file-text")),
@@ -301,14 +295,21 @@ shinyUI(fluidPage(id="main-page",
                  h3("Methods"),
                  p("Below are the available methods for optim, LA and LD."),
                  br(),
-                 h4("Optim :"),
-                 dataTableOutput("methods_optim_algs"),
-                 br(),
-                 h4("LaplaceApproximation (LA) :"),
-                 dataTableOutput("methods_LA_algs"),
-                 br(),
-                 h4("LaplacesDemon (LD) :"),
-                 dataTableOutput("methods_LD_algs")
+                 fluidRow(
+                     column(6,
+                            h4("Optim :"),
+                            tableOutput("methods_optim_algs"),
+                            br(),
+                            h4("LaplaceApproximation (LA) :"),
+                            tableOutput("methods_LA_algs"),
+                            br()
+                            ),
+                     column(6,
+                            h4("LaplacesDemon (LD) :"),
+                            tableOutput("methods_LD_algs"),
+                            br()
+                            )
+                     )
         ),
         
         # Info Tab #

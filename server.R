@@ -98,12 +98,13 @@ shinyServer(function(input, output, session) {
         
         # check if example buttons were pressed
         if(rvs$currentData[1] == 'example') {
-            xval <- c(-2,1,5,8,9)
-            yval <- c(0,2,5,6,8)
-            sx <- c(0.1,0.2,0.1,0.4,0.3)
-            sy <- c(0.2,0.3,0.1,0.2,0.5)
+            xval <- c(-1.22, -0.78, 0.44, 1.01, 1.22)
+            yval <- c(-0.15, 0.49, 1.17, 0.72, 1.22)
+            xerr = c(0.12, 0.14, 0.20, 0.07, 0.06)
+            yerr = c(0.13, 0.03, 0.07, 0.11, 0.08)
+            xycor = c(0.90, -0.40, -0.25, 0.00, -0.20)
             return(hyper.fit(X=cbind(xval,yval),
-                             vars=cbind(sx, sy)^2,
+                             covarray=makecovarray2d(xerr, yerr, xycor),
                              itermax=itermax,
                              coord.type=coord.type,
                              scat.type=scat.type,
@@ -366,14 +367,14 @@ shinyServer(function(input, output, session) {
         if(!is.null(out)) {
             if(isolate(rvs$currentData[1]) == "example") {
                 fluidRow(column(5,
-                                h4("The File"),
+                                h4("Example File"),
                                 HTML('<pre>
-"x" "y" "sx" "sy"
--2 0 0.1 0.2
-1 2 0.2 0.3
-5 5 0.1 0.1
-8 6 0.4 0.2
-9 8 0.3 0.5</pre>')
+"x" "y" "sx" "sy" "corxy"
+-1.22 -0.15 0.12 0.13 0.90
+-0.78 0.49 0.14 0.03 -0.40
+0.44 1.17 0.20 0.07 -0.25
+1.01 0.72 0.07 0.11 0.00
+1.22 1.22 0.06 0.08 -0.20</pre>')
                                 ),
                          column(7,
                                 h4("Make your Own Fit"),
@@ -445,50 +446,74 @@ shinyServer(function(input, output, session) {
     
     # Methods tab - optim table #
     #############################
-    output$methods_optim_algs = renderDataTable({
+    output$methods_optim_algs = renderTable({
         
         # gather info from main table
-        acros <- sapply(algsTable$optim, function(alg) { alg[["alg"]] })
-        names <- sapply(algsTable$optim, function(alg) { alg[["name"]] })
-        links <- sapply(algsTable$optim, function(alg) { alg[["link"]] })
-        name_links <- paste0("<a href='",links,"' target='_blank'>",names,"</a>")
+        acros <- c()
+        names <- c()
+        links <- c()
+        for(a in algsTable$optim) {
+            acros <- append(acros, a$alg)
+            names <- append(names, a$name)
+            links <- append(links, a$link)
+        }
         
-        # display data frame
+        # construct data frame for output
+        name_links <- paste0("<a href='",links,"' target='_blank'>",names,"</a>")
         df <- data.frame(acros, name_links)
         colnames(df) <- c("Acronym","Link")
+        
+        #the output
         df
-    }, options = list(paging = FALSE, searching = FALSE))
+        
+    }, sanitize.text.function = function(x) x, include.rownames=FALSE)
     
     # Methods tab - LA table #
     ##########################
-    output$methods_LA_algs = renderDataTable({
+    output$methods_LA_algs = renderTable({
         
         # gather info from main table
-        acros <- sapply(algsTable$LA, function(alg) { alg[["alg"]] })
-        names <- sapply(algsTable$LA, function(alg) { alg[["name"]] })
-        links <- sapply(algsTable$LA, function(alg) { alg[["link"]] })
-        name_links <- paste0("<a href='",links,"' target='_blank'>",names,"</a>")
+        acros <- c()
+        names <- c()
+        links <- c()
+        for(a in algsTable$LA) {
+            acros <- append(acros, a$alg)
+            names <- append(names, a$name)
+            links <- append(links, a$link)
+        }
         
-        # display data frame
+        # construct data frame for output
+        name_links <- paste0("<a href='",links,"' target='_blank'>",names,"</a>")
         df <- data.frame(acros, name_links)
         colnames(df) <- c("Acronym","Link")
+        
+        #the output
         df
-    }, options = list(paging = FALSE, searching = FALSE))
+        
+    }, sanitize.text.function = function(x) x, include.rownames=FALSE)
     
     # Methods tab - LD table #
     ##########################
-    output$methods_LD_algs = renderDataTable({
+    output$methods_LD_algs = renderTable({
         
         # gather info from main table
-        acros <- sapply(algsTable$LD, function(alg) { alg[["alg"]] })
-        names <- sapply(algsTable$LD, function(alg) { alg[["name"]] })
-        links <- sapply(algsTable$LD, function(alg) { alg[["link"]] })
-        name_links <- paste0("<a href='",links,"' target='_blank'>",names,"</a>")
+        acros <- c()
+        names <- c()
+        links <- c()
+        for(a in algsTable$LD) {
+            acros <- append(acros, a$alg)
+            names <- append(names, a$name)
+            links <- append(links, a$link)
+        }
         
-        # display data frame
+        # construct data frame for output
+        name_links <- paste0("<a href='",links,"' target='_blank'>",names,"</a>")
         df <- data.frame(acros, name_links)
         colnames(df) <- c("Acronym","Link")
+        
+        #the output
         df
-    }, options = list(paging = FALSE, searching = FALSE))
+        
+    }, sanitize.text.function = function(x) x, include.rownames=FALSE)
     
 })
