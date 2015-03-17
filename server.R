@@ -1,7 +1,7 @@
 shinyServer(function(input, output, session) {
     
-    # Data Selection Listeners #
-    ############################
+    # Data Selection Listeners. Handles what data to use #
+    ######################################################
     rvs <- reactiveValues(currentData = "example")
     observe({
         if (input$use_file1 != 0) {
@@ -35,8 +35,8 @@ shinyServer(function(input, output, session) {
             rvs$currentData <- 'example'
     })
     
-    # Selected Data UI #
-    ####################
+    # Show the name of selected data next to Recalculate button #
+    #############################################################
     output$hyper_fit_data_used <- renderUI ({
         HTML("<span style='color:#888888;'>Using ", rvs$currentData[1], "</span>")
     })
@@ -259,8 +259,8 @@ shinyServer(function(input, output, session) {
         }
     })
     
-    # Posterior1 plot height #
-    ##########################
+    # Posterior1 plot height, used by Posterior1 plot #
+    ###################################################
     posterior1_plot_height <- function() {
         fit <- fit_result()
         if(!is.null(fit)) {
@@ -297,8 +297,8 @@ shinyServer(function(input, output, session) {
         return(getMethod()$Specs)
     })
     
-    # Specs label field #
-    #####################
+    # Show Specs option (specs = list or specs = NULL) #
+    ####################################################
     output$hyper_fit_specs_label <- renderText ({
         if(input$hyper_fit_specs_checkbox==TRUE) {
             if(length(getSpecs()) > 0) {
@@ -313,8 +313,8 @@ shinyServer(function(input, output, session) {
         }
     })
     
-    # Specs input fields #
-    ######################
+    # Generate dynamic specs input fields #
+    #######################################
     output$hyper_fit_specs_inputs <- renderUI ({
         specs <- getSpecs()
         if(length(specs) > 0) {
@@ -325,14 +325,14 @@ shinyServer(function(input, output, session) {
         }
     })
     
-    # Render current method #
-    #########################
+    # Render current method (appears below Algorith and Method options) #
+    #####################################################################
     output$hyper_fit_selected_method <- renderUI({
         HTML("<span style='color:#888888;'>Using ", getMethod()$name, "</span>")
     })
     
-    # Minimal Summary output #
-    ##########################
+    # Minimal Summary output (values below main plot) #
+    ###################################################
     output$hyper_fit_small_summary <- renderUI({
         out <- fit_result()
         if(!is.null(out) && isolate(rvs$currentData[1]) != "example") {
@@ -360,8 +360,8 @@ shinyServer(function(input, output, session) {
         }
     })
     
-    # Summary output #
-    ##################
+    # The Summary output #
+    ######################
     output$hyper_fit_summary <- renderUI({
         out <- fit_result()
         if(!is.null(out)) {
@@ -388,8 +388,8 @@ shinyServer(function(input, output, session) {
         }
     })
     
-    # Drop-down headers #
-    #####################
+    # Responsive Drop-down headers (the little changing arrows) #
+    #############################################################
     
     output$ui_fit_options_header <- renderUI({
         if(input$ui_show_fit_options)
@@ -422,8 +422,8 @@ shinyServer(function(input, output, session) {
             HTML("<b>Column Names <i class='fa fa-chevron-up' style='color:#AAAAAA;'></i></b>")
     })
     
-    # CSS output (used to show/hide plots) #
-    ########################################
+    # CSS output (used to show/hide the irrelevent plots) #
+    #######################################################
     output$css_output_plots <- renderUI({
         out <- fit_result()
         css <- ""
