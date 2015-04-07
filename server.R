@@ -1,5 +1,5 @@
 shinyServer(function(input, output, session) {
-    
+    options(rgl.useNULL=TRUE)
     # Data Selection Listeners. Handles what data to use #
     ######################################################
     rvs <- reactiveValues(currentData = "example")
@@ -26,10 +26,10 @@ shinyServer(function(input, output, session) {
         if (input$example_hogg != 0)
             rvs$currentData <- 'hogg'
     })
-    observe({
-        if (input$example_FP6dFGS != 0)
-            rvs$currentData <- 'FP6dFGS'
-    })
+#    observe({
+#        if (input$example_FP6dFGS != 0)
+#            rvs$currentData <- 'FP6dFGS'
+#    })
     observe({
         if (input$use_example != 0)
             rvs$currentData <- 'example'
@@ -92,6 +92,7 @@ shinyServer(function(input, output, session) {
         
         # get more options
         itermax <- isolate(input$hyper_fit_itermax)
+        if(itermax>2e4){itermax=2e4; updateNumericInput(session, "hyper_fit_itermax", value=2e4)}
         coord.type <- isolate(input$hyper_fit_coord_type)
         scat.type <- isolate(input$hyper_fit_scat_type)
         doerrorscale <- isolate(input$hyper_fit_doerrorscale)
@@ -172,6 +173,14 @@ shinyServer(function(input, output, session) {
         }
         else {
             
+          # read in data from file
+            isolate({
+            df <- fread(rvs$currentData[2], header=TRUE, sep="auto", data.table=FALSE)
+            if(dim(df)[1]>2e3){stop('Uploaded data cannot have more than 2,000 row entries. Please use the standalone hyper.fit package available at github.com/asgr/hyper.fit instead for large datasets.')}
+            newnames=colnames(df)
+            print(newnames)
+            
+            observe({updateSelectInput(session, "hyper_fit_column_x", choices=newnames)})
             # get column names
             col_x <- isolate(input$hyper_fit_column_x)
             col_y <- isolate(input$hyper_fit_column_y)
@@ -184,8 +193,6 @@ shinyServer(function(input, output, session) {
             col_coryz <- isolate(input$hyper_fit_column_coryz)
             col_weights <- isolate(input$hyper_fit_column_weights)
             
-            # read in data from file
-            df <- fread(rvs$currentData[2], header=TRUE, sep="auto", data.table=FALSE)
             if(!is.null(df[[col_x]]) && !is.null(df[[col_y]]) && !is.null(df[[col_z]])) {ndims <- 3}
             else if(!is.null(df[[col_x]]) && !is.null(df[[col_y]])) {ndims <- 2}
             else {stop("Input file needs x and y dimensions.")}
@@ -222,6 +229,7 @@ shinyServer(function(input, output, session) {
                               algo.method=algo.method,
                               Specs=Specs,
                               doerrorscale=doerrorscale))
+            })
         }
         
         # if no data is being used, return NULL

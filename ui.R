@@ -1,7 +1,7 @@
 shinyUI(fluidPage(id="main-page",
     
     tags$head(
-        tags$title("hyper.fit"),
+        tags$title("Hyper Fit"),
         tags$link(rel="shortcut icon", href="favicon.ico"),
         tags$style(HTML("
                         #main-page {
@@ -68,7 +68,7 @@ shinyUI(fluidPage(id="main-page",
     #########
     
     fluidRow(id="ui_header_row",
-        h1("hyper.fit")
+        h1("Hyper Fit")
     ),
     
     # Main Content #
@@ -79,7 +79,7 @@ shinyUI(fluidPage(id="main-page",
         
         # Plot Tab #
         ############
-        tabPanel("Plot",
+        tabPanel("Analyse Data",
                  br(),
                  sidebarLayout(
                      
@@ -125,7 +125,7 @@ shinyUI(fluidPage(id="main-page",
                                                   ),
                                                   column(6,
                                                          conditionalPanel(condition="input.hyper_fit_algo_func == 'LA' || input.hyper_fit_algo_func == 'LD'",
-                                                                          numericInput(inputId="hyper_fit_itermax", label="Max Iterations", value=1e4, min=0)
+                                                                          numericInput(inputId="hyper_fit_itermax", label="Max Iterations", value=1e4, min=0, max=2e4)
                                                          )
                                                   )
                                               ),
@@ -231,7 +231,10 @@ shinyUI(fluidPage(id="main-page",
                                                             'text/tab-separated-values',
                                                             'text/plain',
                                                             '.csv',
-                                                            '.tsv'
+                                                            '.tsv',
+                                                            '.tab',
+                                                            '.dat',
+                                                            '.txt'
                                                         )
                                               ),
                                               div(class="dropdown_item",
@@ -241,19 +244,19 @@ shinyUI(fluidPage(id="main-page",
                                               conditionalPanel(condition="input.ui_show_column_names == true",
                                                                fluidRow(
                                                                    column(4,
-                                                                          textInput(inputId="hyper_fit_column_x", label="x :", value="x"),
-                                                                          textInput(inputId="hyper_fit_column_y", label="y :", value="y"),
-                                                                          textInput(inputId="hyper_fit_column_z", label="z :", value="z")
+                                                                          selectInput(inputId="hyper_fit_column_x", label="x :", choices=defaultchoices, selected="x"),
+                                                                          selectInput(inputId="hyper_fit_column_y", label="y :", choices=defaultchoices, selected="y"),
+                                                                          selectInput(inputId="hyper_fit_column_z", label="z :", choices=defaultchoices, selected="z")
                                                                    ),
                                                                    column(4,
-                                                                          textInput(inputId="hyper_fit_column_sx", label="sx :", value="sx"),
-                                                                          textInput(inputId="hyper_fit_column_sy", label="sy :", value="sy"),
-                                                                          textInput(inputId="hyper_fit_column_sz", label="sz :", value="sz")
+                                                                          selectInput(inputId="hyper_fit_column_sx", label="sx :", choices=defaultchoices, selected="sx"),
+                                                                          selectInput(inputId="hyper_fit_column_sy", label="sy :", choices=defaultchoices, selected="sy"),
+                                                                          selectInput(inputId="hyper_fit_column_sz", label="sz :", choices=defaultchoices, selected="sz")
                                                                    ),
                                                                    column(4,
-                                                                          textInput(inputId="hyper_fit_column_corxy", label="corxy :", value="corxy"),
-                                                                          textInput(inputId="hyper_fit_column_corxz", label="corxz :", value="corxz"),
-                                                                          textInput(inputId="hyper_fit_column_coryz", label="coryz :", value="coryz")
+                                                                          selectInput(inputId="hyper_fit_column_corxy", label="corxy :", choices=defaultchoices, selected="corxy"),
+                                                                          selectInput(inputId="hyper_fit_column_corxz", label="corxz :", choices=defaultchoices, selected="corxz"),
+                                                                          selectInput(inputId="hyper_fit_column_coryz", label="coryz :", choices=defaultchoices, selected="coryz")
                                                                    )
                                                                ),
                                                                textInput(inputId="hyper_fit_column_weights", label="weights :", value="weights")
@@ -271,7 +274,7 @@ shinyUI(fluidPage(id="main-page",
                                               actionButton(inputId="example_hogg", label=span("hogg"), icon("file-text")),
                                               actionButton(inputId="example_GAMAsmVsize", label=span("GAMAsmVsize"), icon("file-text")),
                                               actionButton(inputId="example_TFR", label=span("TFR"), icon("file-text")),
-                                              actionButton(inputId="example_FP6dFGS", label=span("FP6dFGS"), icon("file-text")),
+                                              #actionButton(inputId="example_FP6dFGS", label=span("FP6dFGS"), icon("file-text")),
                                               actionButton(inputId="example_MJB", label=span("MJB"), icon("file-text"))
                              )
                          )
@@ -293,7 +296,7 @@ shinyUI(fluidPage(id="main-page",
         ###############
         tabPanel("Methods", class="container-fluid",
                  h3("Methods"),
-                 p("Below are the available methods for optim, LA and LD."),
+p("Below are the available methods for Algorithm types",strong("optim,"), strong("LA"), "and", strong("LD.")),
                  br(),
                  fluidRow(
                      column(6,
@@ -348,6 +351,7 @@ shinyUI(fluidPage(id="main-page",
                          "Data may be uploaded under the", strong("Upload Data"), "section.",
                          "The file format accepted has a header with quoted column names, and with the values separated by a separator in the set [ , tab space | ; : ].",
                          "Once the data is uploaded, it can be used in all future calculations by pressing the", span("Use", style="text-decoration:underline;"), "button.",
+                         "Uploaded data cannot have more than 2,000 row entries for the web version of Hyper Fit. Please use the standalone hyper.fit package available at github.com/asgr/hyper.fit instead for large datasets.",
                          "The uploaded data may either be 2D or 3D data, and below are some rules and examples of the 2D and 3D data:"
                      )
                  ),
@@ -474,7 +478,7 @@ shinyUI(fluidPage(id="main-page",
                             strong("Max Iterations"), p("(itermax)", style="color:#999999")
                      ),
                      column(10,
-                            p('The maximum iterations to use for either the LaplaceApproximation function or LaplacesDemon function. (LA and LD only)')
+                            p('The maximum iterations to use for either the LaplaceApproximation function or LaplacesDemon function (LA and LD only). This is limited to a maximum of 20,000 iterations for the web version of Hyper Fit. Please use the standalone hyper.fit package available at github.com/asgr/hyper.fit instead for analysis requiring more iterations (this should be apparent from the diagnostic Coda trace plots when using LD methods).')
                      )
                  ),
                  fluidRow(
@@ -564,7 +568,7 @@ shinyUI(fluidPage(id="main-page",
                  h4("Acknowledgements"),
                  div(class="container",
                      p(
-                         "This website was written in the programming language", strong("R"), "by", strong("Joseph Dunne"), "and", strong("Aarom Robotham."),
+                         "This website was written in the programming language", strong("R"), "by", strong("Joseph Dunne"), "and", strong("Aaron Robotham"), "with help from", strong("Mark Boulton."),
                          "It uses the library", strong("Shiny"), "to provide the interface."
                      )
                  )

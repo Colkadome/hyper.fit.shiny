@@ -1,3 +1,4 @@
+options(rgl.useNULL=TRUE)
 library("magicaxis")
 library("MASS")
 library("rgl")
@@ -9,10 +10,12 @@ library("hyper.fit")
 library("data.table")
 
 data(hogg)
-data(FP6dFGS)
+#data(FP6dFGS)
 data(TFR)
 data(MJB)
 data(GAMAsmVsize)
+
+defaultchoices=c(NA,'x','y','z','sx','sy','sz','corxy','corxz','coryz')
 
 algsTable = list(
     "optim" = list(
@@ -72,7 +75,7 @@ algsTable = list(
 #                             "alg"  = "HJ",
 #                             "Specs"= list()),
         "LBFGS"      = list("name" = "Limited-memory BFGS",
-                            "link" = "",
+                            "link" = "http://www.bayesian-inference.com/softwaredoc/LaplaceApproximation",
                             "alg"  = "LBFGS",
                             "Specs"= list()),
         "LM"         = list("name" = "Levenberg-Marquardt",
