@@ -2,7 +2,7 @@ shinyServer(function(input, output, session) {
     options(rgl.useNULL=TRUE)
     # Data Selection Listeners. Handles what data to use #
     ######################################################
-    rvs <- reactiveValues(currentData = "example")
+    rvs <- reactiveValues(currentData = "example", colnames = defaultColumns)
     observe({
         if (input$use_file1 != 0) {
             if(!is.null(isolate(input$upload_file1))) {
@@ -35,6 +35,26 @@ shinyServer(function(input, output, session) {
             rvs$currentData <- 'example'
     })
     
+    # Check file once specified, and update column names #
+    ######################################################
+    observe({
+        if(!is.null(input$upload_file1)) {
+            df = fread(isolate(input$upload_file1$datapath), header=TRUE, sep="auto", data.table=FALSE)
+            names = c("None", colnames(df))
+            n = length(names)
+            updateSelectInput(session, "hyper_fit_column_x", choices=names, selected=names[ifelse(n>1,2,1)])
+            updateSelectInput(session, "hyper_fit_column_y", choices=names, selected=names[ifelse(n>2,3,1)])
+            updateSelectInput(session, "hyper_fit_column_z", choices=names, selected="None")
+            updateSelectInput(session, "hyper_fit_column_sx", choices=names, selected="None")
+            updateSelectInput(session, "hyper_fit_column_sy", choices=names, selected="None")
+            updateSelectInput(session, "hyper_fit_column_sz", choices=names, selected="None")
+            updateSelectInput(session, "hyper_fit_column_corxy", choices=names, selected="None")
+            updateSelectInput(session, "hyper_fit_column_corxz", choices=names, selected="None")
+            updateSelectInput(session, "hyper_fit_column_coryz", choices=names, selected="None")
+            updateSelectInput(session, "hyper_fit_column_weights", choices=names, selected="None")
+        }
+    })
+    
     # Show the name of selected data next to Recalculate button #
     #############################################################
     output$hyper_fit_data_used <- renderUI ({
@@ -47,6 +67,7 @@ shinyServer(function(input, output, session) {
         
         # make reactive
         input$hyper_fit_calculate
+        input$use_file1
         
         # get the algortithm/method
         algo.func <- isolate(input$hyper_fit_algo_func)
@@ -174,13 +195,10 @@ shinyServer(function(input, output, session) {
         else {
             
           # read in data from file
-            isolate({
-            df <- fread(rvs$currentData[2], header=TRUE, sep="auto", data.table=FALSE)
+            df <- fread(isolate(rvs$currentData[2]), header=TRUE, sep="auto", data.table=FALSE)
+            if(ncol(df)<2){stop('Uploaded data must have more than 2 columns!')}
             if(dim(df)[1]>2e3){stop('Uploaded data cannot have more than 2,000 row entries. Please use the standalone hyper.fit package available at github.com/asgr/hyper.fit instead for large datasets.')}
-            newnames=colnames(df)
-            print(newnames)
-            
-            observe({updateSelectInput(session, "hyper_fit_column_x", choices=newnames)})
+                              
             # get column names
             col_x <- isolate(input$hyper_fit_column_x)
             col_y <- isolate(input$hyper_fit_column_y)
@@ -229,7 +247,6 @@ shinyServer(function(input, output, session) {
                               algo.method=algo.method,
                               Specs=Specs,
                               doerrorscale=doerrorscale))
-            })
         }
         
         # if no data is being used, return NULL

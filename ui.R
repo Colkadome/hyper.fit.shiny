@@ -244,22 +244,22 @@ shinyUI(fluidPage(id="main-page",
                                               conditionalPanel(condition="input.ui_show_column_names == true",
                                                                fluidRow(
                                                                    column(4,
-                                                                          selectInput(inputId="hyper_fit_column_x", label="x :", choices=defaultchoices, selected="x"),
-                                                                          selectInput(inputId="hyper_fit_column_y", label="y :", choices=defaultchoices, selected="y"),
-                                                                          selectInput(inputId="hyper_fit_column_z", label="z :", choices=defaultchoices, selected="z")
+                                                                          selectInput(inputId="hyper_fit_column_x", label="x :", choices=NULL),
+                                                                          selectInput(inputId="hyper_fit_column_y", label="y :", choices=NULL),
+                                                                          selectInput(inputId="hyper_fit_column_z", label="z :", choices=NULL)
                                                                    ),
                                                                    column(4,
-                                                                          selectInput(inputId="hyper_fit_column_sx", label="sx :", choices=defaultchoices, selected="sx"),
-                                                                          selectInput(inputId="hyper_fit_column_sy", label="sy :", choices=defaultchoices, selected="sy"),
-                                                                          selectInput(inputId="hyper_fit_column_sz", label="sz :", choices=defaultchoices, selected="sz")
+                                                                          selectInput(inputId="hyper_fit_column_sx", label="sx :", choices=NULL),
+                                                                          selectInput(inputId="hyper_fit_column_sy", label="sy :", choices=NULL),
+                                                                          selectInput(inputId="hyper_fit_column_sz", label="sz :", choices=NULL)
                                                                    ),
                                                                    column(4,
-                                                                          selectInput(inputId="hyper_fit_column_corxy", label="corxy :", choices=defaultchoices, selected="corxy"),
-                                                                          selectInput(inputId="hyper_fit_column_corxz", label="corxz :", choices=defaultchoices, selected="corxz"),
-                                                                          selectInput(inputId="hyper_fit_column_coryz", label="coryz :", choices=defaultchoices, selected="coryz")
+                                                                          selectInput(inputId="hyper_fit_column_corxy", label="corxy :", choices=NULL),
+                                                                          selectInput(inputId="hyper_fit_column_corxz", label="corxz :", choices=NULL),
+                                                                          selectInput(inputId="hyper_fit_column_coryz", label="coryz :", choices=NULL)
                                                                    )
                                                                ),
-                                                               textInput(inputId="hyper_fit_column_weights", label="weights :", value="weights")
+                                                               selectInput(inputId="hyper_fit_column_weights", label="weights :", choices=NULL)
                                               ),
                                               actionButton(inputId="use_file1", label=span("Use"), icon("file-text")),
                                               actionButton(inputId="use_example", label=span("Show Example")) 
@@ -349,8 +349,14 @@ p("Below are the available methods for Algorithm types",strong("optim,"), strong
                  div(class="container",
                      p(
                          "Data may be uploaded under the", strong("Upload Data"), "section.",
-                         "The file format accepted has a header with quoted column names, and with the values separated by a separator in the set [ , tab space | ; : ].",
-                         "Once the data is uploaded, it can be used in all future calculations by pressing the", span("Use", style="text-decoration:underline;"), "button.",
+                         "The file format accepted has a header with quoted column names (which can be any user defined name), and with the values separated by a separator in the set [ , tab space | ; : ].",
+                         "Once the data is uploaded, it can be used in all future calculations by pressing the", span("Use", style="text-decoration:underline;"), "button."
+                     ),
+                     p(
+                         "When a file is selected with", span("Choose File", style="text-decoration:underline;"), ", the column names may be set by clicking", strong("Column Names."),
+                         "It is recommended that the column names be set for an uploaded file before the file is used."
+                        ),
+                     p(
                          "Uploaded data cannot have more than 2,000 row entries for the web version of Hyper Fit. Please use the standalone hyper.fit package available at github.com/asgr/hyper.fit instead for large datasets.",
                          "The uploaded data may either be 2D or 3D data, and below are some rules and examples of the 2D and 3D data:"
                      )

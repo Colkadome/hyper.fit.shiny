@@ -15,8 +15,6 @@ data(TFR)
 data(MJB)
 data(GAMAsmVsize)
 
-defaultchoices=c(NA,'x','y','z','sx','sy','sz','corxy','corxz','coryz')
-
 algsTable = list(
     "optim" = list(
         "Nelder-Mead"= list("name" = "Nelder and Mead",
